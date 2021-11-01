@@ -1,7 +1,7 @@
 # Личный проект «TaskForce»
 
 * Студент: [Юлия Елагина](https://up.htmlacademy.ru/yii/2/user/938431).
-* Наставник: `Неизвестно`.
+* Наставник: [Александр Костюк](https://up.htmlacademy.ru/yii/2/user/1898875).
 
 ---
 
