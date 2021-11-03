@@ -13,7 +13,7 @@ class Task
     const ACTION_ASSIGN = 'assign';
     const ACTION_REJECT = 'reject';
 
-    private array $statuses = [
+    private $statuses = [
         self::STATUS_NEW => 'Новое',
         self::STATUS_CANCELLED => 'Отменено',
         self::STATUS_COMPLETED => 'Выполнено',
@@ -21,7 +21,7 @@ class Task
         self::STATUS_FAILED => 'Провалено',
     ];
 
-    private array $actions = [
+    private $actions = [
         self::ACTION_ASSIGN => 'Подтвердить',
         self::ACTION_ACCEPT => 'Завершить',
         self::ACTION_CANCEL => 'Отменить',
@@ -29,9 +29,9 @@ class Task
         self::ACTION_REJECT => 'Отказаться от задания',
     ];
 
-    private int $clientId;
-    private int $performerId;
-    private string $currentStatus = self::STATUS_NEW;
+    private  $clientId;
+    private  $performerId;
+    private $currentStatus = self::STATUS_NEW;
 
     public function __construct($clientId, $performerId = null)
     {
@@ -39,12 +39,12 @@ class Task
         $this->performerId = $performerId;
     }
 
-    public function getClientId()
+    public function getClientId(): int
     {
         return $this->clientId;
     }
 
-    public function getPerformerId()
+    public function getPerformerId(): int
     {
         return $this->performerId;
     }
@@ -80,11 +80,11 @@ class Task
         return $result;
     }
 
-    public function getAvailableActions($userRole)
+    static function getAvailableActions($status, $userRole): array
     {
         $isClient = $userRole === 'client';
         $result = [];
-        switch ($this->currentStatus) {
+        switch ($status) {
             case self::STATUS_NEW:
                 $result = $isClient ? [self::ACTION_ASSIGN, self::ACTION_CANCEL] : [self::ACTION_RESPOND];
                 break;
