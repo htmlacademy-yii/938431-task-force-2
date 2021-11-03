@@ -17,4 +17,19 @@ echo "Ожидается статус 'failed', получено: " . $task->get
 echo "Ожидается статус 'new', получено: " . $task->getNextStatus($task::ACTION_RESPOND) . "\n";
 echo "Ожидается статус 'new', получено: " . $task->getNextStatus('unknown') . "\n";
 
+echo "Ожидаются действия 'assign', 'cancel', получено: "
+    . Task::getAvailableActions($task::STATUS_NEW, 'client')[0] . ", "
+    . Task::getAvailableActions($task::STATUS_NEW, 'client')[1] . "\n";
+
+echo "Ожидается действие 'respond' получено: "
+    . Task::getAvailableActions($task::STATUS_NEW, 'performer')[0] . "\n";
+
+echo "Ожидается действие 'accept' получено: "
+    . Task::getAvailableActions($task::STATUS_IN_PROGRESS, 'client')[0] . "\n";
+
+echo "Ожидается действие 'reject' получено: "
+    . Task::getAvailableActions($task::STATUS_IN_PROGRESS, 'performer')[0] . "\n";
+
+echo "Не ожидается доступных действий, получено действий: "
+    . count(Task::getAvailableActions($task::STATUS_COMPLETED, 'client')) . "\n";
 
