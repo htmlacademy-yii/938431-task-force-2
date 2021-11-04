@@ -29,8 +29,8 @@ class Task
         self::ACTION_REJECT => 'Отказаться от задания',
     ];
 
-    private  $clientId;
-    private  $performerId;
+    private $clientId;
+    private $performerId;
     private $currentStatus = self::STATUS_NEW;
 
     public function __construct($clientId, $performerId = null)
@@ -59,7 +59,7 @@ class Task
         return $this->actions;
     }
 
-    public function getNextStatus($action): string
+    public function getNextStatus($action)
     {
         switch ($action) {
             case self::ACTION_ASSIGN:
@@ -74,8 +74,11 @@ class Task
             case self::ACTION_REJECT:
                 $result = self::STATUS_FAILED;
                 break;
+            case self::ACTION_RESPOND:
+                $result = self::STATUS_NEW;
+                break;
             default:
-                $result = $this->currentStatus;
+                $result = null;
         };
         return $result;
     }
