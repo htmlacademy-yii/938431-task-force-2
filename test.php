@@ -10,26 +10,26 @@ echo "\n";
 echo "ClientID: " . $task->getClientId() . "\n";
 echo "PerformerID: " . $task->getPerformerId() . "\n";
 
-echo "Ожидается статус 'in_progress', получено: " . $task->getNextStatus($task::ACTION_ASSIGN) . "\n";
-echo "Ожидается статус 'completed', получено: " . $task->getNextStatus($task::ACTION_ACCEPT) . "\n";
-echo "Ожидается статус 'cancelled', получено: " . $task->getNextStatus($task::ACTION_CANCEL) . "\n";
-echo "Ожидается статус 'failed', получено: " . $task->getNextStatus($task::ACTION_REJECT) . "\n";
-echo "Ожидается статус 'new', получено: " . $task->getNextStatus($task::ACTION_RESPOND) . "\n";
-echo "Ожидается статус 'new', получено: " . $task->getNextStatus('unknown') . "\n";
+echo "Ожидается статус 'in_progress', получено: " . $task->getNextStatus(Task::ACTION_ASSIGN) . "\n";
+echo "Ожидается статус 'completed', получено: " . $task->getNextStatus(Task::ACTION_ACCEPT) . "\n";
+echo "Ожидается статус 'cancelled', получено: " . $task->getNextStatus(Task::ACTION_CANCEL) . "\n";
+echo "Ожидается статус 'failed', получено: " . $task->getNextStatus(Task::ACTION_REJECT) . "\n";
+echo "Ожидается статус 'new', получено: " . $task->getNextStatus(Task::ACTION_RESPOND) . "\n";
+echo "Ожидается статус NULL, получено: " . $task->getNextStatus('unknown') . "\n";
 
 echo "Ожидаются действия 'assign', 'cancel', получено: "
-    . Task::getAvailableActions($task::STATUS_NEW, 'client')[0] . ", "
-    . Task::getAvailableActions($task::STATUS_NEW, 'client')[1] . "\n";
+    . Task::getAvailableActions(Task::STATUS_NEW, 'client')[0] . ", "
+    . Task::getAvailableActions(Task::STATUS_NEW, 'client')[1] . "\n";
 
 echo "Ожидается действие 'respond' получено: "
-    . Task::getAvailableActions($task::STATUS_NEW, 'performer')[0] . "\n";
+    . Task::getAvailableActions(Task::STATUS_NEW, 'performer')[0] . "\n";
 
 echo "Ожидается действие 'accept' получено: "
-    . Task::getAvailableActions($task::STATUS_IN_PROGRESS, 'client')[0] . "\n";
+    . Task::getAvailableActions(Task::STATUS_IN_PROGRESS, 'client')[0] . "\n";
 
 echo "Ожидается действие 'reject' получено: "
-    . Task::getAvailableActions($task::STATUS_IN_PROGRESS, 'performer')[0] . "\n";
+    . Task::getAvailableActions(Task::STATUS_IN_PROGRESS, 'performer')[0] . "\n";
 
 echo "Не ожидается доступных действий, получено действий: "
-    . count(Task::getAvailableActions($task::STATUS_COMPLETED, 'client')) . "\n";
+    . count(Task::getAvailableActions(Task::STATUS_COMPLETED, 'client')) . "\n";
 
