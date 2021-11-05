@@ -31,12 +31,13 @@ class Task
 
     private $clientId;
     private $performerId;
-    private $currentStatus = self::STATUS_NEW;
+    private $currentStatus;
 
-    public function __construct($clientId, $performerId = null)
+    public function __construct($clientId, $performerId = null, $status = self::STATUS_NEW)
     {
         $this->clientId = $clientId;
         $this->performerId = $performerId;
+        $this->currentStatus = $status;
     }
 
     public function getClientId(): int
@@ -61,41 +62,23 @@ class Task
 
     public function getNextStatus($action)
     {
-        switch ($action) {
-            case self::ACTION_ASSIGN:
-                $result = self::STATUS_IN_PROGRESS;
-                break;
-            case self::ACTION_ACCEPT:
-                $result = self::STATUS_COMPLETED;
-                break;
-            case self::ACTION_CANCEL:
-                $result = self::STATUS_CANCELLED;
-                break;
-            case self::ACTION_REJECT:
-                $result = self::STATUS_FAILED;
-                break;
-            case self::ACTION_RESPOND:
-                $result = self::STATUS_NEW;
-                break;
-            default:
-                $result = null;
+        return match ($action) {
+            self::ACTION_ASSIGN => self::STATUS_IN_PROGRESS,
+            self::ACTION_ACCEPT => self::STATUS_COMPLETED,
+            self::ACTION_CANCEL => self::STATUS_CANCELLED,
+            self::ACTION_REJECT => self::STATUS_FAILED,
+            self::ACTION_RESPOND => self::STATUS_NEW,
+            default => null,
         };
-        return $result;
     }
 
-    static function getAvailableActions($status, $userRole): array
+    public function getAvailableActions($userRole): array
     {
         $isClient = $userRole === 'client';
-        $result = [];
-        switch ($status) {
-            case self::STATUS_NEW:
-                $result = $isClient ? [self::ACTION_ASSIGN, self::ACTION_CANCEL] : [self::ACTION_RESPOND];
-                break;
-            case self::STATUS_IN_PROGRESS:
-                $result = $isClient ? [self::ACTION_ACCEPT] : [self::ACTION_REJECT];
-                break;
-            default: break;
-        }
-        return $result;
+        return match ($this->currentStatus) {
+            self::STATUS_NEW => $isClient ? [self::ACTION_ASSIGN, self::ACTION_CANCEL] : [self::ACTION_RESPOND],
+            self::STATUS_IN_PROGRESS => $isClient ? [self::ACTION_ACCEPT] : [self::ACTION_REJECT],
+            default => [],
+        };
     }
 }
