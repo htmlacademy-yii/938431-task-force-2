@@ -17,19 +17,27 @@ echo "Ожидается статус 'failed', получено: " . $task->get
 echo "Ожидается статус 'new', получено: " . $task->getNextStatus(Task::ACTION_RESPOND) . "\n";
 echo "Ожидается статус NULL, получено: " . $task->getNextStatus('unknown') . "\n";
 
+echo "\n";
+echo "Текущий статус: 'new'.\n";
 echo "Ожидаются действия 'assign', 'cancel', получено: "
-    . Task::getAvailableActions(Task::STATUS_NEW, 'client')[0] . ", "
-    . Task::getAvailableActions(Task::STATUS_NEW, 'client')[1] . "\n";
+    . $task->getAvailableActions('client')[0] . ", "
+    . $task->getAvailableActions('client')[1] . "\n";
 
 echo "Ожидается действие 'respond' получено: "
-    . Task::getAvailableActions(Task::STATUS_NEW, 'performer')[0] . "\n";
+    . $task->getAvailableActions('performer')[0] . "\n";
 
+$task = new Task(111, 222, Task::STATUS_IN_PROGRESS);
+echo "\n";
+echo "Текущий статус: 'in_progress'.\n";
 echo "Ожидается действие 'accept' получено: "
-    . Task::getAvailableActions(Task::STATUS_IN_PROGRESS, 'client')[0] . "\n";
+    . $task->getAvailableActions('client')[0] . "\n";
 
 echo "Ожидается действие 'reject' получено: "
-    . Task::getAvailableActions(Task::STATUS_IN_PROGRESS, 'performer')[0] . "\n";
+    . $task->getAvailableActions('performer')[0] . "\n";
 
+$task = new Task(111, 222, Task::STATUS_COMPLETED);
+echo "\n";
+echo "Текущий статус: 'completed'.\n";
 echo "Не ожидается доступных действий, получено действий: "
-    . count(Task::getAvailableActions(Task::STATUS_COMPLETED, 'client')) . "\n";
+    . count($task->getAvailableActions('client')) . "\n";
 
