@@ -1,4 +1,6 @@
 <?php
+namespace htmlacademy\business;
+
 class Task
 {
     const STATUS_NEW = 'new';

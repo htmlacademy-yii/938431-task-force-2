@@ -1,5 +1,6 @@
 <?php
-require_once 'Task.php';
+use htmlacademy\business\Task;
+require_once "vendor/autoload.php";
 
 $task = new Task(999, 555);
 
