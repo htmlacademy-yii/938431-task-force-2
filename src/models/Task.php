@@ -1,5 +1,5 @@
 <?php
-namespace htmlacademy\business;
+namespace app\models;
 
 class Task
 {
