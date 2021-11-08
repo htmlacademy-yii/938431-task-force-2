@@ -1,4 +1,6 @@
 <?php
+namespace app\models;
+
 class Task
 {
     const STATUS_NEW = 'new';
