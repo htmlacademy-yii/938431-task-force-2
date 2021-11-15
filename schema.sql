@@ -6,10 +6,16 @@ DEFAULT COLLATE utf8_general_ci;
 USE taskforce;
 
 -- Таблица возможных статусов пользователей
-CREATE TABLE user_status (
+CREATE TABLE IF NOT EXISTS user_status (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title varchar(50) NOT NULL,
   UNIQUE uk_title (title)
+);
+
+-- Таблица городов
+CREATE TABLE IF NOT EXISTS city (
+  id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR (50) NOT NULL
 );
 
 -- Таблица user. Данные о зарегистрированных пользователях
@@ -25,6 +31,7 @@ CREATE TABLE IF NOT EXISTS user (
   phone VARCHAR(20) NOT NULL,
   telegram VARCHAR(50),
   user_role VARCHAR(20) NOT NULL,
+  city_id SMALLINT COMMENT 'Связь с полем id таблицы city',
   status_id INT COMMENT 'Связь с полем id таблицы user_status',
   FOREIGN KEY fk_status_id (status_id) REFERENCES user_status (id),
   UNIQUE uk_email (email)
@@ -40,12 +47,15 @@ CREATE TABLE IF NOT EXISTS task (
   status VARCHAR(50) NOT NULL,
   deadline_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   description TEXT NOT NULL,
-  location VARCHAR(255),
   budget DECIMAL(10.2) NOT NULL DEFAULT 0,
+  location VARCHAR(255),
+  city_id SMALLINT COMMENT 'Связь с полем id таблицы city',
   INDEX idx_customer_id (customer_id) COMMENT 'Индекс поля customer_id',
   INDEX idx_performer_id (performer_id) COMMENT 'Индекс поля performer_id',
+  INDEX idx_city_id (city_id) COMMENT 'Индекс поля city_id',
   FOREIGN KEY fk_customer_id (customer_id) REFERENCES user (id),
-  FOREIGN KEY fk_performer_id (performer_id) REFERENCES user (id)
+  FOREIGN KEY fk_performer_id (performer_id) REFERENCES user (id),
+  FOREIGN KEY fk_city_id (city_id) REFERENCES city (id)
 );
 
 -- Таблица category. Доступные категории заданий
@@ -76,7 +86,7 @@ CREATE TABLE IF NOT EXISTS attachment (
 );
 
 -- Таблица связей. Данные о профессиональных сферах деятельности исполнителей
-CREATE TABLE user_category (
+CREATE TABLE IF NOT EXISTS user_category (
   id INT AUTO_INCREMENT PRIMARY KEY,
   performer_id INT NOT NULL COMMENT 'Связь с полем id таблицы user',
   category_id SMALLINT NOT NULL COMMENT 'Связь с полем id таблицы category',
@@ -87,7 +97,7 @@ CREATE TABLE user_category (
 );
 
 -- Таблица откликов пользователей на задания
-CREATE TABLE respond (
+CREATE TABLE IF NOT EXISTS respond (
   id INT AUTO_INCREMENT PRIMARY KEY,
   task_id INT NOT NULL COMMENT 'Связь с полем id таблицы task',
   text TEXT(500),
@@ -100,7 +110,7 @@ CREATE TABLE respond (
 );
 
 -- Таблица отзывов заказчиков о работе исполнителей
-CREATE TABLE review (
+CREATE TABLE IF NOT EXISTS review (
   id INT AUTO_INCREMENT PRIMARY KEY,
   create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   customer_id INT NOT NULL COMMENT 'Связь с полем id таблицы user',
