@@ -10,7 +10,7 @@ class Task
     const STATUS_FAILED = 'failed';
 
     const ACTION_RESPOND = 'respond';
-    const ACTION_ACCEPT = 'accept';
+    const ACTION_COMPLETE = 'complete';
     const ACTION_CANCEL = 'cancel';
     const ACTION_ASSIGN = 'assign';
     const ACTION_REJECT = 'reject';
@@ -23,14 +23,7 @@ class Task
         self::STATUS_FAILED => 'Провалено',
     ];
 
-    private $actions = [
-        self::ACTION_ASSIGN => 'Подтвердить',
-        self::ACTION_ACCEPT => 'Завершить',
-        self::ACTION_CANCEL => 'Отменить',
-        self::ACTION_RESPOND => 'Откликнуться на задание',
-        self::ACTION_REJECT => 'Отказаться от задания',
-    ];
-
+    private $actions;
     private $clientId;
     private $performerId;
     private $currentStatus;
@@ -40,6 +33,13 @@ class Task
         $this->clientId = $clientId;
         $this->performerId = $performerId;
         $this->currentStatus = $status;
+        $this->actions = [
+            self::ACTION_ASSIGN => new ActionAssign(),
+            self::ACTION_COMPLETE => new ActionComplete(),
+            self::ACTION_CANCEL => new ActionCancel(),
+            self::ACTION_RESPOND => new ActionRespond(),
+            self::ACTION_REJECT => new ActionReject(),
+        ];
     }
 
     public function getClientId(): int
@@ -66,7 +66,7 @@ class Task
     {
         return match ($action) {
             self::ACTION_ASSIGN => self::STATUS_IN_PROGRESS,
-            self::ACTION_ACCEPT => self::STATUS_COMPLETED,
+            self::ACTION_COMPLETE => self::STATUS_COMPLETED,
             self::ACTION_CANCEL => self::STATUS_CANCELLED,
             self::ACTION_REJECT => self::STATUS_FAILED,
             self::ACTION_RESPOND => self::STATUS_NEW,
@@ -74,13 +74,17 @@ class Task
         };
     }
 
-    public function getAvailableActions($userRole): array
+    public function getAvailableActions($userId): array
     {
-        $isClient = $userRole === 'client';
-        return match ($this->currentStatus) {
-            self::STATUS_NEW => $isClient ? [self::ACTION_ASSIGN, self::ACTION_CANCEL] : [self::ACTION_RESPOND],
-            self::STATUS_IN_PROGRESS => $isClient ? [self::ACTION_ACCEPT] : [self::ACTION_REJECT],
+        $availableActions = match ($this->currentStatus) {
+            self::STATUS_NEW => [self::ACTION_ASSIGN, self::ACTION_CANCEL, self::ACTION_RESPOND],
+            self::STATUS_IN_PROGRESS => [self::ACTION_COMPLETE, self::ACTION_REJECT],
             default => [],
         };
+
+        $cb = function ($action, $key) use ($availableActions, $userId) {
+            return in_array($key, $availableActions) && $action->hasAccessRight($this->performerId, $this->clientId, $userId);
+        };
+        return array_filter($this->actions, $cb, ARRAY_FILTER_USE_BOTH);
     }
 }
