@@ -1,5 +1,8 @@
 <?php
 namespace app\models;
+use app\exceptions\ActionTypeException;
+use app\exceptions\TaskStatusException;
+use app\exceptions\UserRoleException;
 
 class Task
 {
@@ -30,6 +33,12 @@ class Task
 
     public function __construct($clientId, $performerId = null, $status = self::STATUS_NEW)
     {
+        if ($clientId === $performerId) {
+            throw new UserRoleException("Получены идентичные id Заказчика и Исполнителя. Заказчик не может быть Исполнителем");
+        }
+        if (!array_key_exists($status, $this->statuses)) {
+            throw new TaskStatusException("Переданный статус задания не существует.");
+        }
         $this->clientId = $clientId;
         $this->performerId = $performerId;
         $this->currentStatus = $status;
@@ -64,13 +73,15 @@ class Task
 
     public function getNextStatus($action)
     {
+        if (!array_key_exists($action, $this->actions)) {
+            throw new ActionTypeException("Переданный тип действия не существует");
+        }
         return match ($action) {
             self::ACTION_ASSIGN => self::STATUS_IN_PROGRESS,
             self::ACTION_COMPLETE => self::STATUS_COMPLETED,
             self::ACTION_CANCEL => self::STATUS_CANCELLED,
             self::ACTION_REJECT => self::STATUS_FAILED,
             self::ACTION_RESPOND => self::STATUS_NEW,
-            default => null,
         };
     }
 
