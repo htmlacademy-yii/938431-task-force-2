@@ -71,7 +71,7 @@ class Task
         return $this->actions;
     }
 
-    public function getNextStatus($action)
+    public function getNextStatus(string $action): ?string
     {
         if (!array_key_exists($action, $this->actions)) {
             throw new ActionTypeException("Переданный тип действия не существует");
