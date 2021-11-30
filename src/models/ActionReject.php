@@ -15,7 +15,7 @@ class ActionReject extends  AbstractAction
         return Task::ACTION_REJECT;
     }
 
-    public function hasAccessRight($performerId, $customerId, $currentUserId): bool
+    public function hasAccessRight(?int $performerId, int $customerId, int $currentUserId): bool
     {
         return $currentUserId === $performerId;
     }

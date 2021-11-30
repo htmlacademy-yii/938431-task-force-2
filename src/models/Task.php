@@ -31,7 +31,7 @@ class Task
     private $performerId;
     private $currentStatus;
 
-    public function __construct($clientId, $performerId = null, $status = self::STATUS_NEW)
+    public function __construct(int $clientId, int $performerId = null, ?string $status = self::STATUS_NEW)
     {
         if ($clientId === $performerId) {
             throw new UserRoleException("Получены идентичные id Заказчика и Исполнителя. Заказчик не может быть Исполнителем");
@@ -56,7 +56,7 @@ class Task
         return $this->clientId;
     }
 
-    public function getPerformerId(): int
+    public function getPerformerId(): ?int
     {
         return $this->performerId;
     }
@@ -85,7 +85,7 @@ class Task
         };
     }
 
-    public function getAvailableActions($userId): array
+    public function getAvailableActions(int $userId): array
     {
         $availableActions = match ($this->currentStatus) {
             self::STATUS_NEW => [self::ACTION_ASSIGN, self::ACTION_CANCEL, self::ACTION_RESPOND],
@@ -93,7 +93,7 @@ class Task
             default => [],
         };
 
-        $cb = function ($action, $key) use ($availableActions, $userId) {
+        $cb = function (object $action, string $key) use ($availableActions, $userId): bool {
             return in_array($key, $availableActions) && $action->hasAccessRight($this->performerId, $this->clientId, $userId);
         };
         return array_filter($this->actions, $cb, ARRAY_FILTER_USE_BOTH);

@@ -15,7 +15,7 @@ class ActionRespond extends  AbstractAction
         return Task::ACTION_RESPOND;
     }
 
-    public function hasAccessRight($performerId, $customerId, $currentUserId): bool
+    public function hasAccessRight(?int $performerId, int $customerId, int $currentUserId): bool
     {
         return $currentUserId === $performerId;
     }
