@@ -39,6 +39,10 @@ class Task
         if (!array_key_exists($status, $this->statuses)) {
             throw new TaskStatusException("Переданный статус задания не существует.");
         }
+
+        if ($clientId && $performerId && $status === self::STATUS_NEW) {
+            throw new TaskStatusException("Новое задание не может иметь Исполнителя");
+        }
         $this->clientId = $clientId;
         $this->performerId = $performerId;
         $this->currentStatus = $status;
