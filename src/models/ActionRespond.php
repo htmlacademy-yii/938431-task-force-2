@@ -17,6 +17,6 @@ class ActionRespond extends  AbstractAction
 
     public function hasAccessRight(?int $performerId, int $customerId, int $currentUserId): bool
     {
-        return $currentUserId !== $customerId;
+        return $currentUserId !== $customerId && $performerId !== $currentUserId;
     }
 }
