@@ -1,5 +1,5 @@
 <?php
-namespace app\models;
+namespace app\utils;
 use app\exceptions\FileFormatException;
 use app\exceptions\SourceFileException;
 
@@ -42,7 +42,9 @@ class CSVFileConverter {
             $sqlFileObject = new \SplFileObject($sqlFileName, "w");
             foreach ($this->getNextLine() as $line) {
                 $query = $this->createSqlQuery($line);
-                $sqlFileObject->fwrite($query);
+                if ($query) {
+                    $sqlFileObject->fwrite($query);
+                }
             }
         }
         catch (\RuntimeException $ex) {
@@ -53,7 +55,7 @@ class CSVFileConverter {
     //   Возвращает заголовки столбцов таблицы
     private function getHeaderData(): ?array {
         $this->fileObject->rewind();
-        return $this->fileObject->getcsv();
+        return $this->fileObject->fgetcsv();
     }
 
     //   Возвращает массив значений очередной строки таблицы
@@ -64,9 +66,17 @@ class CSVFileConverter {
         }
         return $result;
     }
+
     //  Создает запрос на запись в таблицу на основании одной строки данных
     private function createSqlQuery(array $line): string {
         $columns = implode(',', $this->columns);
+        foreach ($line as &$value) {
+            if ($value)  {
+                $value = '"' . $value . '"';
+            }
+        }
+        unset($value);
+
         $values = implode(',', $line);
         return "INSERT INTO " . $this->tableName . " (" . $columns . ") VALUES(" . $values . ");" . PHP_EOL;
     }
