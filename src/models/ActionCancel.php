@@ -15,7 +15,7 @@ class ActionCancel extends  AbstractAction
         return Task::ACTION_CANCEL;
     }
 
-    public function hasAccessRight($performerId, $customerId, $currentUserId): bool
+    public function hasAccessRight(?int $performerId, int $customerId, int $currentUserId): bool
     {
         return $currentUserId === $customerId;
     }

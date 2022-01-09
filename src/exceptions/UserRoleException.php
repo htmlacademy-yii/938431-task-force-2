@@ -1,4 +1,4 @@
 <?php
-namespace app\ex;
+namespace app\exceptions;
 
 class UserRoleException extends \Exception {}

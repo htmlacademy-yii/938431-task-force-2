@@ -1,0 +1,3 @@
+"id","login","email","password","avatar","create_at","birthdate","info","phone","telegram","user_role","city_id"
+"1","keks-client","keks@keks.ru","keks",,"2021-12-21 17:46:20","1990-01-15",NULL,"+74953232233",NULL,"customer",NULL
+"2","keks-performer","keks1@keks.ru","keks",,"2021-12-21 17:47:46","2000-03-03",NULL,"+74995556655",NULL,"performer",NULL

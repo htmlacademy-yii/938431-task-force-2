@@ -1,8 +1,8 @@
 <?php
 namespace app\models;
-use app\ex\ActionTypeException;
-use app\ex\TaskStatusException;
-use app\ex\UserRoleException;
+use app\exceptions\ActionTypeException;
+use app\exceptions\TaskStatusException;
+use app\exceptions\UserRoleException;
 
 class Task
 {
@@ -35,12 +35,15 @@ class Task
     {
         if ($clientId === $performerId) {
             throw new UserRoleException("Получены идентичные id Заказчика и Исполнителя. Заказчик не может быть Исполнителем");
-            die;
         }
         if (!array_key_exists($status, $this->statuses)) {
             throw new TaskStatusException("Переданный статус задания не существует.");
-            die;
         }
+
+        if ($clientId && $performerId && $status === self::STATUS_NEW) {
+            throw new TaskStatusException("Новое задание не может иметь Исполнителя");
+        }
+
         $this->clientId = $clientId;
         $this->performerId = $performerId;
         $this->currentStatus = $status;
@@ -77,7 +80,6 @@ class Task
     {
         if (!array_key_exists($action, $this->actions)) {
             throw new ActionTypeException("Переданный тип действия не существует");
-            die;
         }
         return match ($action) {
             self::ACTION_ASSIGN => self::STATUS_IN_PROGRESS,
@@ -96,9 +98,10 @@ class Task
             default => [],
         };
 
-        $cb = function (object $action, string $key) use ($availableActions, $userId) {
+        $cb = function (object $action, string $key) use ($availableActions, $userId): bool {
             return in_array($key, $availableActions) && $action->hasAccessRight($this->performerId, $this->clientId, $userId);
         };
+
         return array_filter($this->actions, $cb, ARRAY_FILTER_USE_BOTH);
     }
 }

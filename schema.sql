@@ -5,13 +5,6 @@ DEFAULT COLLATE utf8_general_ci;
 
 USE taskforce;
 
--- Таблица возможных статусов пользователей
-CREATE TABLE IF NOT EXISTS user_status (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  title varchar(50) NOT NULL,
-  UNIQUE uk_title (title)
-);
-
 -- Таблица городов
 CREATE TABLE IF NOT EXISTS city (
   id SMALLINT AUTO_INCREMENT PRIMARY KEY,
@@ -32,8 +25,6 @@ CREATE TABLE IF NOT EXISTS user (
   telegram VARCHAR(50),
   user_role VARCHAR(20) NOT NULL,
   city_id SMALLINT COMMENT 'Связь с полем id таблицы city',
-  status_id INT COMMENT 'Связь с полем id таблицы user_status',
-  FOREIGN KEY fk_status_id (status_id) REFERENCES user_status (id),
   UNIQUE uk_email (email)
   );
 
