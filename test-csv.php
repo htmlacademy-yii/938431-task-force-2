@@ -6,28 +6,20 @@ use app\exceptions\SourceFileException;
 
 require_once "vendor/autoload.php";
 
-$columns = [
-    'id',
-    'login',
-    'email',
-    'password',
-    'avatar',
-    'create_at',
-    'birthdate',
-    'info',
-    'phone',
-    'telegram',
-    'user_role',
-    'city_id',
-    ];
-$converter = new CSVFileConverter('data/user.csv', 'user', $columns);
+$columns_city = ['name', 'lat', 'longitude'];
+$columns_category = ['name', 'icon'];
 
-try {
-    $converter->writeSql('queries.sql');
-}
-catch (SourceFileException $ex) {
-    echo "Не удалось обработать csv файл: " . $ex->getMessage();
-}
-catch (FileFormatException $ex) {
-    echo "Неверный формат файла импорта: " . $ex->getMessage();
+$converters[] = new CSVFileConverter('data/cities.csv', 'city', $columns_city);
+$converters[] = new CSVFileConverter('data/categories.csv', 'category', $columns_category);
+
+foreach ($converters as $converter) {
+    try {
+        $converter->writeSql('queries.sql');
+    }
+    catch (SourceFileException $ex) {
+        echo "Не удалось обработать csv файл: " . $ex->getMessage();
+    }
+    catch (FileFormatException $ex) {
+        echo "Неверный формат файла импорта: " . $ex->getMessage();
+    }
 }

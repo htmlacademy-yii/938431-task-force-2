@@ -8,7 +8,9 @@ USE taskforce;
 -- Таблица городов
 CREATE TABLE IF NOT EXISTS city (
   id SMALLINT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR (50) NOT NULL
+  name VARCHAR (50) NOT NULL,
+  lat DECIMAL(10,7) NOT NULL,
+  longitude DECIMAL(10,7) NOT NULL
 );
 
 -- Таблица user. Данные о зарегистрированных пользователях
@@ -19,7 +21,7 @@ CREATE TABLE IF NOT EXISTS user (
   password VARCHAR(100) NOT NULL,
   avatar VARCHAR(255) NOT NULL,
   create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  birthdate YEAR,
+  birthdate DATE,
   info TEXT(300),
   phone VARCHAR(20) NOT NULL,
   telegram VARCHAR(50),
@@ -52,8 +54,9 @@ CREATE TABLE IF NOT EXISTS task (
 -- Таблица category. Доступные категории заданий
 CREATE TABLE IF NOT EXISTS category (
   id SMALLINT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR (50) NOT NULL,
-  UNIQUE uk_title (title)
+  name VARCHAR (50) NOT NULL,
+  icon VARCHAR (100) NOT NULL,
+  UNIQUE uk_name (name)
 );
 
 -- Таблица связей task_category. Данные о категориях заданий

@@ -8,6 +8,7 @@ class CSVFileConverter {
     private $tableName;
     private $columns;
     private $fileObject;
+    private $resultData;
 
     public function __construct(string $filename, string $tableName, array $columns)
     {
@@ -34,14 +35,15 @@ class CSVFileConverter {
         }
 
         $header_data = $this->getHeaderData();
-        if ($header_data !== $this->columns) {
+        if ($header_data != $this->columns) {
             throw new FileFormatException("Исходный файл не содержит необходимых столбцов");
         }
 
         try {
-            $sqlFileObject = new \SplFileObject($sqlFileName, "w");
-            foreach ($this->getNextLine() as $line) {
-                $query = $this->createSqlQuery($line);
+            $sqlFileObject = new \SplFileObject($sqlFileName, "a");
+            $this->importData();
+            if (!empty($this->resultData)) {
+                $query = $this->createSqlQuery();
                 if ($query) {
                     $sqlFileObject->fwrite($query);
                 }
@@ -55,30 +57,38 @@ class CSVFileConverter {
     //   Возвращает заголовки столбцов таблицы
     private function getHeaderData(): ?array {
         $this->fileObject->rewind();
-        return $this->fileObject->fgetcsv();
+        $res = $this->fileObject->fgetcsv();
+        if(substr($res[0], 0, 3) == pack('CCC', 0xef, 0xbb, 0xbf)) {
+            $res[0] = substr($res[0], 3);
+        }
+        return $res;
     }
 
     //   Возвращает массив значений очередной строки таблицы
     private function getNextLine(): ?iterable {
-        $result = null;
         while (!$this->fileObject->eof()) {
             yield $this->fileObject->fgetcsv();
         }
-        return $result;
     }
 
-    //  Создает запрос на запись в таблицу на основании одной строки данных
-    private function createSqlQuery(array $line): string {
-        $columns = implode(',', $this->columns);
-        foreach ($line as &$value) {
-            if ($value)  {
+    private function importData(): void {
+        foreach ($this->getNextLine() as $line) {
+            if (!$line[0]) {
+                continue;
+            }
+            foreach ($line as &$value) {
                 $value = '"' . $value . '"';
             }
+            unset($value);
+            $this->resultData[] = "(" . implode(', ',$line) . ")";
         }
-        unset($value);
+    }
 
-        $values = implode(',', $line);
-        return "INSERT INTO " . $this->tableName . " (" . $columns . ") VALUES(" . $values . ");" . PHP_EOL;
+    //  Создает запрос на запись в таблицу на основании импортированных данных
+    private function createSqlQuery(): string {
+        $columns = implode(',', $this->columns);
+        $values = implode(', ', $this->resultData);
+        return "INSERT INTO " . $this->tableName . " (" . $columns . ") VALUES" . $values . ";" . PHP_EOL;
     }
 
     private function validateColumns(array $columns): bool {
