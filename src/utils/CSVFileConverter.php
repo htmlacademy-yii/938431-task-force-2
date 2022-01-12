@@ -40,7 +40,7 @@ class CSVFileConverter {
         }
 
         try {
-            $sqlFileObject = new \SplFileObject($sqlFileName, "a");
+            $sqlFileObject = new \SplFileObject($sqlFileName, "w");
             $this->importData();
             if (!empty($this->resultData)) {
                 $query = $this->createSqlQuery();

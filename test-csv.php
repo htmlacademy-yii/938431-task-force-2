@@ -12,9 +12,10 @@ $columns_category = ['name', 'icon'];
 $converters[] = new CSVFileConverter('data/cities.csv', 'city', $columns_city);
 $converters[] = new CSVFileConverter('data/categories.csv', 'category', $columns_category);
 
-foreach ($converters as $converter) {
+foreach ($converters as $key => $converter) {
+    $fileName = 'query-' . $key . '.sql';
     try {
-        $converter->writeSql('queries.sql');
+        $converter->writeSql($fileName);
     }
     catch (SourceFileException $ex) {
         echo "Не удалось обработать csv файл: " . $ex->getMessage();
