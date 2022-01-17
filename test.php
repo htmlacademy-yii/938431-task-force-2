@@ -1,8 +1,9 @@
 <?php
 use app\models\Task;
-use app\ex\ActionTypeException;
-use app\ex\TaskStatusException;
-use app\ex\UserRoleException;
+use app\exceptions\ActionTypeException;
+use app\exceptions\TaskStatusException;
+use app\exceptions\UserRoleException;
+
 require_once "vendor/autoload.php";
 
 echo "1. Ожидается исключение типа UserRoleException, получено: ";
@@ -12,14 +13,13 @@ try {
     echo $ex->getMessage() . PHP_EOL;
 }
 
-$task = new Task(999, 555);
-
+$task = new Task(999);
 
 $actions = $task->getAllActions();
 echo "2. Доступные действия: \n";
 foreach ($actions as $action) {
     echo $action->getInnerName() . ": " . $action-> getTitle();
-echo "\n";
+    echo "\n";
 }
 
 echo "\n";
@@ -49,7 +49,7 @@ foreach ($actions as $action) {
 echo "\n";
 var_dump($actions);
 
-echo "13. Для Исполнителя ожидается действие 'respond' получено: ";
+echo "13. Для пользователя ожидается действие 'respond' получено: ";
 $actions = $task->getAvailableActions(555);
 foreach ($actions as $action) {
     echo $action->getInnerName() . " ";

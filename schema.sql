@@ -5,17 +5,12 @@ DEFAULT COLLATE utf8_general_ci;
 
 USE taskforce;
 
--- Таблица возможных статусов пользователей
-CREATE TABLE IF NOT EXISTS user_status (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  title varchar(50) NOT NULL,
-  UNIQUE uk_title (title)
-);
-
 -- Таблица городов
 CREATE TABLE IF NOT EXISTS city (
   id SMALLINT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR (50) NOT NULL
+  name VARCHAR (50) NOT NULL,
+  lat DECIMAL(10,7) NOT NULL,
+  longitude DECIMAL(10,7) NOT NULL
 );
 
 -- Таблица user. Данные о зарегистрированных пользователях
@@ -26,14 +21,12 @@ CREATE TABLE IF NOT EXISTS user (
   password VARCHAR(100) NOT NULL,
   avatar VARCHAR(255) NOT NULL,
   create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  birthdate YEAR,
+  birthdate DATE,
   info TEXT(300),
   phone VARCHAR(20) NOT NULL,
   telegram VARCHAR(50),
   user_role VARCHAR(20) NOT NULL,
   city_id SMALLINT COMMENT 'Связь с полем id таблицы city',
-  status_id INT COMMENT 'Связь с полем id таблицы user_status',
-  FOREIGN KEY fk_status_id (status_id) REFERENCES user_status (id),
   UNIQUE uk_email (email)
   );
 
@@ -61,8 +54,9 @@ CREATE TABLE IF NOT EXISTS task (
 -- Таблица category. Доступные категории заданий
 CREATE TABLE IF NOT EXISTS category (
   id SMALLINT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR (50) NOT NULL,
-  UNIQUE uk_title (title)
+  name VARCHAR (50) NOT NULL,
+  icon VARCHAR (100) NOT NULL,
+  UNIQUE uk_name (name)
 );
 
 -- Таблица связей task_category. Данные о категориях заданий
